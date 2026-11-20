@@ -27,11 +27,11 @@ case "${1:---dashboard}" in
  --reset) reset_state "${2:-all}"; show_dashboard ;;
  --dashboard)
  while :; do
-  audit_all
   clear 2>/dev/null || true; show_dashboard
   echo '[A]udit all [S]tep action [C]ertify [X]Reset [Q]uit'
   read -r -t "$REFRESH_SECONDS" -n 1 c || c=r
   case "${c,,}" in
+   r) audit_all; read -r -p 'Refresh complete. Enter...' ;;
    a) audit_all; read -r -p 'Enter...' ;;
    s) read -r -p 'Step number (1-13): ' n; if [[ "$n" =~ ^([1-9]|1[0-3])$ ]]; then read -r -p 'Action audit/fix/verify: ' action; [[ "$action" =~ ^(audit|fix|verify)$ ]] && run_step "$n" "$action"; fi; read -r -p 'Enter...' ;;
    c) certify; read -r -p 'Enter...' ;;

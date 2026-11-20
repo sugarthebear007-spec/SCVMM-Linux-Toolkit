@@ -116,8 +116,8 @@ run_step_workflow() {
     run_step "$id" audit || return
     if [[ "$(get_status "$id")" != PASS ]]; then
         run_step "$id" fix || return
-        run_step "$id" verify || return
     fi
+    run_step "$id" verify
 }
 
 audit_all() {

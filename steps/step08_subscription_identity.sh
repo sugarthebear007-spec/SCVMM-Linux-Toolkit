@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+step08_audit(){ if command -v subscription-manager >/dev/null 2>&1 && subscription-manager identity >/dev/null 2>&1; then set_step_result FAIL 'RHEL subscription identity is registered'; elif [[ -d /etc/zypp/credentials.d ]] && find /etc/zypp/credentials.d -type f -print -quit 2>/dev/null | grep -q .; then set_step_result WARN 'SUSE credentials exist; verify SUSEConnect cleanup'; elif [[ -d /var/lib/ubuntu-advantage ]] && find /var/lib/ubuntu-advantage -type f -print -quit 2>/dev/null | grep -q .; then set_step_result WARN 'Ubuntu Pro state exists; inspect token/attachment'; else set_step_result PASS 'No obvious active subscription identity detected'; fi; }
+step08_fix(){ set_step_result WARN 'Remediation requires explicit review; no automatic change is made by this initial build'; }
+step08_verify(){ step08_audit; }

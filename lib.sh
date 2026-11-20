@@ -150,13 +150,16 @@ show_dashboard() {
     printf '\n%s  v%s\n' "$TOOL_NAME" "$TOOL_VERSION"
     printf 'Host: %s | OS: %s\nKernel: %s | Architecture: %s\n' "$host" "$os_name" "$kernel" "$arch"
     printf '%-4s %-7s %-37s %-19s %s\n' 'STEP' 'STATUS' 'CHECK' 'LAST RUN' 'DETAIL'
+    printf 'Legend: %s / %s / %s / %s\n' "$(scvmm_color_status PASS)" "$(scvmm_color_status WARN)" "$(scvmm_color_status FAIL)" "$(scvmm_color_status 'NOT RUN')"
     printf '%s\n' '-----------------------------------------------------------------------------------------------'
     for i in $(seq 1 "$STEP_COUNT"); do
         status="$(get_status "$i")"; message="$(get_message "$i")"; stamp="$(get_timestamp "$i")"
         case "$status" in PASS) ((pass+=1));; WARN) ((warn+=1));; FAIL) ((fail+=1));; *) ((pending+=1));; esac
         [[ -n "$message" ]] || message='Not audited yet'
         [[ -n "$stamp" ]] || stamp='--'
-        printf '%02d   %-7s %-37s %-19s %s\n' "$i" "$(scvmm_color_status "$status")" "$(step_name "$i")" "${stamp:0:19}" "$message"
+        printf '%02d   ' "$i"
+        scvmm_color_status "$status"
+        printf ' %-37s %-19s %s\n' "$(step_name "$i")" "${stamp:0:19}" "$message"
     done
     status="$(get_status 14)"; message="$(get_message 14)"
     printf '%s\n' '-----------------------------------------------------------------------------------------------'

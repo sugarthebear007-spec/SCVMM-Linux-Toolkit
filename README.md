@@ -4,9 +4,9 @@ A modular, guest-side tool for auditing and preparing Linux VMs for use as SCVMM
 
 ## Operating modes
 
-- **New install** (`./manager.sh --new-install --yes`): run the audit for each of the 13 preparation steps; invoke that step's repair handler when the audit is not PASS; independently verify it; then run Step 14 certification. `--yes` confirms the complete workflow. Individual repair handlers must still be designed to be safe, distro-aware, and explicit about consequential changes.
-- **Existing VM** (`./manager.sh --existing-vm`): audit the VM as it was received and run final certification. It does not invoke repair handlers. Review the dashboard, repair only what is approved, then rerun the assessment.
-- **Interactive dashboard** (`./manager.sh`): color-coded live view with menu-driven audits, step actions, workflows, certification, and reset controls.
+- **New install** (`bash manager.sh --new-install --yes`): run the audit for each of the 13 preparation steps; invoke that step's repair handler when the audit is not PASS; independently verify it; then run Step 14 certification. `--yes` confirms the complete workflow. Individual repair handlers must still be designed to be safe, distro-aware, and explicit about consequential changes.
+- **Existing VM** (`bash manager.sh --existing-vm`): audit the VM as it was received and run final certification. It does not invoke repair handlers. Review the dashboard, repair only what is approved, then rerun the assessment.
+- **Interactive dashboard** (`bash manager.sh`): color-coded live view with menu-driven audits, step actions, workflows, certification, and reset controls.
 
 ## Dashboard status
 
@@ -33,18 +33,18 @@ The engine is designed to be frozen after its independent tests pass. Normal fea
 ## Commands
 
 ```bash
-./manager.sh                         # interactive dashboard
-./manager.sh --existing-vm            # audit + certify, no repairs
-./manager.sh --new-install --yes      # full new-install workflow
-./manager.sh --audit                  # run all read-only audits
-./manager.sh --step 5 audit           # audit one step
-./manager.sh --step 5 fix             # confirm, run repair, then verify
-./manager.sh --step 5 workflow        # confirm, audit/fix/verify as needed
-./manager.sh --certify                # fresh audit of all 13 + Step 14
-./manager.sh --reset 5                # reset one step and its certification
-./manager.sh --reset all              # reset all saved results
+bash manager.sh                         # interactive dashboard
+bash manager.sh --existing-vm            # audit + certify, no repairs
+bash manager.sh --new-install --yes      # full new-install workflow
+bash manager.sh --audit                  # run all read-only audits
+bash manager.sh --step 5 audit           # audit one step
+bash manager.sh --step 5 fix             # confirm, run repair, then verify
+bash manager.sh --step 5 workflow        # confirm, audit/fix/verify as needed
+bash manager.sh --certify                # fresh audit of all 13 + Step 14
+bash manager.sh --reset 5                # reset one step and its certification
+bash manager.sh --reset all              # reset all saved results
 ```
 
-Run with Bash 4 or newer. State and activity logs default to `/var/lib/scvmm-template` and `/var/log/scvmm-template` when run as root, or `$XDG_STATE_HOME/scvmm-template` for a non-root user. Override with `SCVMM_STATE_ROOT`, `SCVMM_LOG_ROOT`, and `SCVMM_MODULE_ROOT`. `SCVMM_REFRESH_SECONDS` controls the dashboard redraw interval. Set `NO_COLOR=1` to disable ANSI colors.
+Run with Bash 4 or newer. Use `bash manager.sh` if the checkout does not preserve executable file permissions. State and activity logs default to `/var/lib/scvmm-template` and `/var/log/scvmm-template` when run as root, or `$XDG_STATE_HOME/scvmm-template` for a non-root user. Override with `SCVMM_STATE_ROOT`, `SCVMM_LOG_ROOT`, and `SCVMM_MODULE_ROOT`. `SCVMM_REFRESH_SECONDS` controls the dashboard redraw interval. Set `NO_COLOR=1` to disable ANSI colors.
 
 The manager never shuts down the VM automatically. Disk reclaim, identity scrubbing, subscription deregistration, network changes, history deletion, and shutdown must be treated as controlled, separately reviewed operations. Step 14 certifies guest-side checks only; SCVMM library import and two-clone validation remain external SCVMM tasks.

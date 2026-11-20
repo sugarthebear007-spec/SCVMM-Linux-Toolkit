@@ -4,7 +4,7 @@ A modular, guest-side tool for auditing and preparing Linux VMs for use as SCVMM
 
 ## Operating modes
 
-- **New install** (`bash manager.sh --new-install --yes`): run the audit for each of the 13 preparation steps; invoke that step's repair handler when the audit is not PASS; independently verify it; then run Step 14 certification. `--yes` confirms the complete workflow. Individual repair handlers must still be designed to be safe, distro-aware, and explicit about consequential changes.
+- **New install** (`bash manager.sh --new-install --yes`): run the audit for each of the 13 preparation steps; invoke that step's repair handler when the audit is not PASS; independently verify it; then run Step 14 certification. Each step receives a fresh verification pass even when its initial audit already passed. `--yes` confirms the complete workflow. Individual repair handlers must still be designed to be safe, distro-aware, and explicit about consequential changes.
 - **Existing VM** (`bash manager.sh --existing-vm`): audit the VM as it was received and run final certification. It does not invoke repair handlers. Review the dashboard, repair only what is approved, then rerun the assessment.
 - **Interactive dashboard** (`bash manager.sh`): color-coded live view with menu-driven audits, step actions, workflows, certification, and reset controls.
 
@@ -28,7 +28,7 @@ The dashboard automatically redraws every 30 seconds. That refresh is display-on
 
 Audit functions must be read-only with respect to guest configuration. Fix functions are separate and may only make changes explicitly authorized by the selected workflow. Verify functions must perform a fresh check after a repair; they must not merely report the saved audit result. Step modules communicate through `set_step_result PASS|WARN|FAIL "message"`.
 
-The engine is designed to be frozen after its independent tests pass. Normal feature work after that point should be limited to the individual step modules, not changes to the manager, shared library, or configuration interface.
+Run the isolated engine test suite with `bash tests/test_engine.sh`. The engine is designed to be frozen after its independent tests pass. Normal feature work after that point should be limited to the individual step modules, not changes to the manager, shared library, or configuration interface.
 
 ## Commands
 

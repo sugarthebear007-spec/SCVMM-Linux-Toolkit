@@ -10,7 +10,7 @@ usage() {
     cat <<USAGE
 $TOOL_NAME v$TOOL_VERSION
 
-Usage: ./manager.sh [command]
+Usage: bash manager.sh [command]
   --dashboard             Open the interactive color dashboard (default)
   --existing-vm           Read-only audit of a partially prepared VM
   --new-install [--yes]   Audit each step, run its fix handler when needed,

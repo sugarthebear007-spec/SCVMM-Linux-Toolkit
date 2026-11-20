@@ -80,7 +80,7 @@ scvmm_invalidate_certification() {
 }
 
 scvmm_load_modules() {
-    local i fn
+    local i action fn
     local -a matches
     for i in $(seq -w 1 "$STEP_COUNT"); do
         matches=( "$MODULE_ROOT/step${i}_"*.sh )
@@ -89,8 +89,10 @@ scvmm_load_modules() {
             return 1
         fi
         source "${matches[0]}" || return 1
-        fn="step${i}_audit"
-        declare -F "$fn" >/dev/null || { printf 'ERROR: %s does not define %s\n' "${matches[0]}" "$fn" >&2; return 1; }
+        for action in audit fix verify; do
+            fn="step${i}_${action}"
+            declare -F "$fn" >/dev/null || { printf 'ERROR: %s does not define %s\n' "${matches[0]}" "$fn" >&2; return 1; }
+        done
     done
     [[ -f "$MODULE_ROOT/step14_certification.sh" ]] || { printf 'ERROR: Missing Step 14 certification module\n' >&2; return 1; }
     source "$MODULE_ROOT/step14_certification.sh" || return 1
@@ -105,7 +107,7 @@ run_step() {
     declare -F "$fn" >/dev/null || { printf 'ERROR: Module does not implement %s\n' "$fn" >&2; return 1; }
     scvmm_invalidate_certification
     STEP_STATUS=UNKNOWN; STEP_MESSAGE=''
-    "$fn" || { [[ "$STEP_STATUS" == UNKNOWN ]] && set_step_result FAIL "$action handler exited with an error"; }
+    if ! "$fn"; then set_step_result FAIL "$action handler exited with an error"; fi
     [[ "$STEP_STATUS" != UNKNOWN ]] || set_step_result FAIL "$action handler did not return a result"
     record_result "$id" "$STEP_STATUS" "$STEP_MESSAGE" || return 1
     printf '%02d  %-7s  %s\n' "$id" "$STEP_STATUS" "$STEP_MESSAGE"

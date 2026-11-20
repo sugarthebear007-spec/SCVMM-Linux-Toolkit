@@ -35,4 +35,5 @@ TEST_STEP01_STATUS=WARN "$ROOT/manager.sh" --existing-vm > "$TMP/existing.out" |
 grep -q 'STEP 14: FAIL' "$TMP/existing.out"
 "$ROOT/manager.sh" --new-install --yes > "$TMP/new.out" || true
 grep -q 'STEP 14: PASS' "$TMP/new.out"
+grep -q 'synthetic verification' "$TMP/new.out"
 echo 'PASS: engine syntax, audit dispatch, fix/verify dispatch, state reset, existing-VM certification, and new-install workflow'
